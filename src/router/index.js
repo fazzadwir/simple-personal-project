@@ -1,25 +1,54 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import HomeView from "../views/HomeView.vue";
+import AddOrg from "../views/AddOrg.vue";
+import EditOrg from "../views/EditOrg.vue";
+import LoginOrg from "../views/LoginOrg.vue";
+import AssetsView from "../views/AssetsView.vue"; // Import AssetsView
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path: "/",
+    name: "LoginOrg",
+    component: LoginOrg,
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+    path: "/home",
+    name: "HomeView",
+    component: HomeView,
+  },
+  {
+    path: "/add-org",
+    name: "AddOrg",
+    component: AddOrg,
+  },
+  {
+    path: "/edit-org",
+    name: "EditOrg",
+    component: EditOrg,
+  },
+  {
+    path: "/assets",
+    name: "AssetsView",
+    component: AssetsView,
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
-})
+  routes,
+});
 
-export default router
+// Navigation guard to protect routes
+router.beforeEach((to, from, next) => {
+  const publicPages = ["/"];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = !!document.cookie.match(/authToken/);
+
+  if (authRequired && !loggedIn) {
+    return next("/");
+  }
+
+  next();
+});
+
+export default router;
