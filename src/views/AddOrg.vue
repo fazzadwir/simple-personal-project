@@ -64,7 +64,7 @@ export default {
           }
         );
         console.log("Organization added:", response.data);
-        this.$router.push("/home");
+        this.$router.push("/");
       } catch (error) {
         console.error("Error adding organization:", error);
       }

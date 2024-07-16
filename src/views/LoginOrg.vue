@@ -38,7 +38,7 @@ export default {
           secure: true,
           sameSite: "Strict",
         });
-        this.$router.push("/home");
+        this.$router.push("/");
       } catch (error) {
         console.error("Error logging in:", error);
       }

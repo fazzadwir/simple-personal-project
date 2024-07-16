@@ -1,35 +1,53 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import LoginOrg from "../views/LoginOrg.vue";
 import AddOrg from "../views/AddOrg.vue";
 import EditOrg from "../views/EditOrg.vue";
-import LoginOrg from "../views/LoginOrg.vue";
-import AssetsView from "../views/AssetsView.vue"; // Import AssetsView
+import AssetsView from "../views/AssetsView.vue";
+import AddAssets from "../views/AddAssets.vue";
+import EditAssets from "../views/EditAssets.vue";
 
 const routes = [
   {
     path: "/",
-    name: "LoginOrg",
-    component: LoginOrg,
+    name: "Home",
+    component: HomeView,
+    meta: { requiresAuth: true },
   },
   {
-    path: "/home",
-    name: "HomeView",
-    component: HomeView,
+    path: "/login",
+    name: "Login",
+    component: LoginOrg,
   },
   {
     path: "/add-org",
     name: "AddOrg",
     component: AddOrg,
+    meta: { requiresAuth: true },
   },
   {
     path: "/edit-org",
     name: "EditOrg",
     component: EditOrg,
+    meta: { requiresAuth: true },
   },
   {
     path: "/assets",
-    name: "AssetsView",
+    name: "Assets",
     component: AssetsView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/add-assets",
+    name: "AddAssets",
+    component: AddAssets,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/edit-assets/:id",
+    name: "EditAsset",
+    component: EditAssets,
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -38,17 +56,17 @@ const router = createRouter({
   routes,
 });
 
-// Navigation guard to protect routes
 router.beforeEach((to, from, next) => {
-  const publicPages = ["/"];
-  const authRequired = !publicPages.includes(to.path);
-  const loggedIn = !!document.cookie.match(/authToken/);
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const token = document.cookie
+    .split(";")
+    .find((c) => c.trim().startsWith("authToken="));
 
-  if (authRequired && !loggedIn) {
-    return next("/");
+  if (requiresAuth && !token) {
+    next("/login");
+  } else {
+    next();
   }
-
-  next();
 });
 
 export default router;
